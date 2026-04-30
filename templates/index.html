@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InsureIQ — Unbiased Insurance Estimator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0f14; color: #f0f0f0; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 2.5rem; border-bottom: 0.5px solid #ffffff18; position: sticky; top: 0; background: #0d0f14; z-index: 100; }
+    .logo { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; color: #fff; cursor: pointer; }
+    .logo span { color: #4f8ef7; }
+    .nav-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .nav-links a { font-size: 13px; color: #aaa; text-decoration: none; cursor: pointer; }
+    .nav-links a:hover { color: #fff; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .hero { padding: 6rem 2.5rem 5rem; max-width: 780px; margin: 0 auto; text-align: center; }
+    .badge { display: inline-block; background: #4f8ef715; border: 0.5px solid #4f8ef740; color: #4f8ef7; font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.5rem; letter-spacing: 0.04em; }
+    .hero h1 { font-size: 3rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.03em; color: #fff; margin-bottom: 1.25rem; }
+    .hero h1 span { color: #4f8ef7; }
+    .hero p { font-size: 1.05rem; color: #888; line-height: 1.75; max-width: 560px; margin: 0 auto 2.5rem; }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: #4f8ef7; color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary:hover { background: #3a7de0; }
+    .btn-ghost { background: transparent; color: #aaa; border: 0.5px solid #ffffff25; padding: 12px 28px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+    .btn-ghost:hover { border-color: #ffffff55; color: #fff; }
+    .trust-row { display: flex; justify-content: center; gap: 2.5rem; padding: 2rem 2.5rem; border-top: 0.5px solid #ffffff10; border-bottom: 0.5px solid #ffffff10; flex-wrap: wrap; }
+    .trust-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .trust-num { font-size: 1.4rem; font-weight: 700; color: #fff; }
+    .trust-label { font-size: 12px; color: #555; }
+    .section { padding: 4rem 2.5rem; max-width: 960px; margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: #4f8ef7; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .section h2 { font-size: 1.75rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem; letter-spacing: -0.02em; }
+    .section > p { font-size: 0.95rem; color: #777; line-height: 1.8; max-width: 580px; }
+    .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2.5rem; }
+    .how-card { background: #13151c; border: 0.5px solid #ffffff12; border-radius: 12px; padding: 1.5rem; }
+    .how-num { font-size: 11px; font-weight: 700; color: #4f8ef7; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+    .how-card h3 { font-size: 0.95rem; font-weight: 600; color: #e0e0e0; margin-bottom: 0.5rem; }
+    .how-card p { font-size: 13px; color: #666; line-height: 1.65; }
+    .cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
+    .ins-card { border-radius: 14px; padding: 1.75rem; cursor: pointer; border: 0.5px solid #ffffff15; transition: border-color 0.2s, transform 0.2s; }
+    .ins-card:hover { border-color: #ffffff35; transform: translateY(-2px); }
+    .ins-card.health { background: #0e1a2e; }
+    .ins-card.home   { background: #0e1e17; }
+    .ins-card.auto   { background: #1e1500; }
+    .ins-card.life   { background: #1a0e1e; }
+    .ins-tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 6px; margin-bottom: 1rem; }
+    .ins-card.health .ins-tag { background: #4f8ef720; color: #4f8ef7; }
+    .ins-card.home   .ins-tag { background: #22c55e20; color: #22c55e; }
+    .ins-card.auto   .ins-tag { background: #f59e0b20; color: #f59e0b; }
+    .ins-card.life   .ins-tag { background: #a855f720; color: #a855f7; }
+    .ins-card h3 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+    .ins-card p { font-size: 13px; color: #666; line-height: 1.65; margin-bottom: 1.25rem; }
+    .ins-factors { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+    .factor-pill { font-size: 11px; color: #aaa; background: #ffffff0a; border: 0.5px solid #ffffff15; padding: 3px 10px; border-radius: 20px; }
+    .ins-link-health { font-size: 13px; font-weight: 600; color: #4f8ef7; }
+    .ins-link-home   { font-size: 13px; font-weight: 600; color: #22c55e; }
+    .ins-link-auto   { font-size: 13px; font-weight: 600; color: #f59e0b; }
+    .ins-link-life   { font-size: 13px; font-weight: 600; color: #a855f7; }
+    .estimator { padding: 3rem 2.5rem; max-width: 800px; margin: 0 auto; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #666; cursor: pointer; margin-bottom: 2rem; background: none; border: none; }
+    .back-btn:hover { color: #fff; }
+    .estimator h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    .estimator .subtitle { font-size: 14px; color: #666; margin-bottom: 2.5rem; line-height: 1.6; }
+    .form-section { background: #13151c; border: 0.5px solid #ffffff12; border-radius: 14px; padding: 1.75rem; margin-bottom: 1.25rem; }
+    .form-section h3 { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #555; text-transform: uppercase; margin-bottom: 1.25rem; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; color: #666; font-weight: 500; }
+    .field input, .field select { padding: 10px 12px; border-radius: 8px; border: 0.5px solid #ffffff18; background: #0d0f14; color: #f0f0f0; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .field input:focus, .field select:focus { border-color: #4f8ef7; }
+    .field select option { background: #13151c; }
+    .submit-btn { width: 100%; padding: 14px; border-radius: 10px; border: none; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: opacity 0.2s; }
+    .submit-btn:hover { opacity: 0.88; }
+    .submit-btn.blue   { background: #4f8ef7; }
+    .submit-btn.green  { background: #16a34a; }
+    .submit-btn.amber  { background: #d97706; }
+    .submit-btn.purple { background: #9333ea; }
+    .result-box { background: #13151c; border: 0.5px solid #ffffff18; border-radius: 14px; padding: 2rem; margin-top: 1.5rem; display: none; }
+    .result-box.visible { display: block; }
+    .result-header { font-size: 12px; color: #555; font-weight: 500; margin-bottom: 0.5rem; }
+    .result-amount { font-size: 2.75rem; font-weight: 700; color: #fff; letter-spacing: -0.03em; }
+    .result-monthly { font-size: 14px; color: #555; margin-top: 4px; margin-bottom: 1.75rem; }
+    .breakdown-title { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #444; text-transform: uppercase; margin-bottom: 1rem; }
+    .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .factor-name { font-size: 13px; color: #888; width: 110px; flex-shrink: 0; }
+    .bar-wrap { flex: 1; height: 5px; background: #ffffff0a; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; }
+    .factor-val { font-size: 12px; color: #555; width: 80px; text-align: right; flex-shrink: 0; }
+    .disclaimer-bar { border-top: 0.5px solid #ffffff10; padding: 1.5rem 2.5rem; text-align: center; margin-top: 2rem; }
+    .disclaimer-bar p { font-size: 12px; color: #333; line-height: 1.7; max-width: 600px; margin: 0 auto; }
+    .loading { text-align: center; color: #555; font-size: 14px; padding: 1rem; display: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" onclick="showPage('home')">Insure<span>IQ</span></div>
+  <div class="nav-links">
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('health')">Health</a>
+    <a onclick="showPage('home-ins')">Home ins.</a>
+    <a onclick="showPage('auto')">Auto</a>
+    <a onclick="showPage('life')">Life</a>
+  </div>
+</nav>
+
+<!-- ── LANDING ──────────────────────────────────────────────── -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="badge">ML-powered &nbsp;·&nbsp; No bias &nbsp;·&nbsp; No broker</div>
+    <h1>Your insurance estimate,<br/><span>without the sales pitch</span></h1>
+    <p>InsureIQ uses machine learning models trained on real insurance data to give you a transparent, unbiased estimate of what you should be paying — before you talk to anyone trying to sell you something.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('choose').scrollIntoView({behavior:'smooth'})">Get my estimate</button>
+      <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How it works</button>
+    </div>
+  </div>
+
+  <div class="trust-row">
+    <div class="trust-item"><div class="trust-num">260,000+</div><div class="trust-label">Training records</div></div>
+    <div class="trust-item"><div class="trust-num">4</div><div class="trust-label">Insurance types</div></div>
+    <div class="trust-item"><div class="trust-num">98%</div><div class="trust-label">Auto model accuracy</div></div>
+    <div class="trust-item"><div class="trust-num">0</div><div class="trust-label">Ads or referral fees</div></div>
+  </div>
+
+  <div class="section" id="how">
+    <div class="section-label">How it works</div>
+    <h2>Built on data, not commissions</h2>
+    <p>Traditional quote tools are lead-generation machines. InsureIQ is different — our predictions come from machine learning models trained on publicly available datasets, with no financial incentive to push you toward any provider.</p>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">01</div><h3>Enter your details</h3><p>Fill in your personal characteristics. No account needed, no email required.</p></div>
+      <div class="how-card"><div class="how-num">02</div><h3>Model runs instantly</h3><p>Our ML model predicts your premium based on the same factors insurers actually use.</p></div>
+      <div class="how-card"><div class="how-num">03</div><h3>See the breakdown</h3><p>We show exactly which factors drive your estimate and by how much — total transparency.</p></div>
+    </div>
+  </div>
+
+  <div class="section" id="choose" style="padding-top:0;">
+    <div class="section-label">Choose your estimate</div>
+    <h2>What are you looking for?</h2>
+    <div class="cards-row">
+      <div class="ins-card health" onclick="showPage('health')">
+        <div class="ins-tag">Health</div>
+        <h3>Health insurance</h3>
+        <p>Predict your annual health premium based on age, BMI, smoking status, and region.</p>
+        <div class="ins-factors">
+          <span class="factor-pill">Age</span><span class="factor-pill">BMI</span><span class="factor-pill">Smoker</span><span class="factor-pill">Region</span><span class="factor-pill">Children</span>
+        </div>
+        <div class="ins-link-health">Get estimate →</div>
+      </div>
+      <div class="ins-card home" onclick="showPage('home-ins')">
+        <div class="ins-tag">Home</div>
+        <h3>Home insurance</h3>
+        <p>Estimate your home premium based on property value, risk area, and security features.</p>
+        <div class="ins-factors">
+          <span class="factor-pill">Property value</span><span class="factor-pill">Year built</span><span class="factor-pill">Flood risk</span>
+        </div>
+        <div class="ins-link-home">Get estimate →</div>
+      </div>
+      <div class="ins-card auto" onclick="showPage('auto')">
+        <div class="ins-tag">Auto</div>
+        <h3>Auto insurance</h3>
+        <p>Estimate your car insurance based on driving history, vehicle age, and annual mileage.</p>
+        <div class="ins-factors">
+          <span class="factor-pill">Driver age</span><span class="factor-pill">Experience</span><span class="factor-pill">Accidents</span><span class="factor-pill">Mileage</span>
+        </div>
+        <div class="ins-link-auto">Get estimate →</div>
+      </div>
+      <div class="ins-card life" onclick="showPage('life')">
+        <div class="ins-tag">Life</div>
+        <h3>Life insurance</h3>
+        <p>Estimate your life insurance premium based on age, benefit amount, and policy details.</p>
+        <div class="ins-factors">
+          <span class="factor-pill">Age</span><span class="factor-pill">Benefit</span><span class="factor-pill">Policy type</span><span class="factor-pill">Term</span>
+        </div>
+        <div class="ins-link-life">Get estimate →</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer-bar">
+    <p>InsureIQ estimates are generated by machine learning models trained on publicly available datasets. These are not official insurance quotes and should not be used as the sole basis for financial decisions. Always consult a licensed insurance provider.</p>
+  </div>
+</div>
+
+<!-- ── HEALTH ────────────────────────────────────────────────── -->
+<div id="page-health" class="page">
+  <div class="estimator">
+    <button class="back-btn" onclick="showPage('home')">← Back</button>
+    <div class="ins-tag" style="background:#4f8ef720;color:#4f8ef7;display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:1rem;">Health insurance</div>
+    <h1>Health premium estimator</h1>
+    <p class="subtitle">Powered by a linear regression model trained on 1,338 records. Model accuracy: R² = 0.78.</p>
+    <div class="form-section">
+      <h3>Personal details</h3>
+      <div class="form-grid">
+        <div class="field"><label>Age</label><input type="number" id="h-age" value="30" min="18" max="64"/></div>
+        <div class="field"><label>Sex</label><select id="h-sex"><option value="female">Female</option><option value="male">Male</option></select></div>
+        <div class="field"><label>BMI (kg/m²)</label><input type="number" id="h-bmi" value="25.0" step="0.1"/></div>
+        <div class="field"><label>Smoker?</label><select id="h-smoker"><option value="no">No</option><option value="yes">Yes</option></select></div>
+        <div class="field"><label>Children</label><input type="number" id="h-children" value="0" min="0" max="10"/></div>
+        <div class="field"><label>Region</label>
+          <select id="h-region">
+            <option value="northeast">Northeast</option>
+            <option value="northwest">Northwest</option>
+            <option value="southeast">Southeast</option>
+            <option value="southwest">Southwest</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="submit-btn blue" onclick="predictHealth()">Calculate health estimate</button>
+    <div class="loading" id="h-loading">Calculating...</div>
+    <div class="result-box" id="h-result">
+      <div class="result-header">Estimated annual health premium</div>
+      <div class="result-amount" id="h-amount">—</div>
+      <div class="result-monthly" id="h-monthly"></div>
+      <div class="breakdown-title">Factor breakdown</div>
+      <div id="h-breakdown"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HOME INS ───────────────────────────────────────────────── -->
+<div id="page-home-ins" class="page">
+  <div class="estimator">
+    <button class="back-btn" onclick="showPage('home')">← Back</button>
+    <div class="ins-tag" style="background:#22c55e20;color:#22c55e;display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:1rem;">Home insurance</div>
+    <h1>Home premium estimator</h1>
+    <p class="subtitle">Powered by a Random Forest model trained on 256,000 records. Model accuracy: R² = 0.53.</p>
+    <div class="form-section">
+      <h3>Property details</h3>
+      <div class="form-grid">
+        <div class="field"><label>Buildings value ($)</label><input type="number" id="ho-buildings" value="250000" step="1000"/></div>
+        <div class="field"><label>Contents value ($)</label><input type="number" id="ho-contents" value="50000" step="1000"/></div>
+        <div class="field"><label>Bedrooms</label><input type="number" id="ho-bedrooms" value="3" min="1" max="10"/></div>
+        <div class="field"><label>Year built</label><input type="number" id="ho-yearbuilt" value="1990"/></div>
+        <div class="field"><label>Sex</label><select id="ho-sex"><option value="female">Female</option><option value="male">Male</option></select></div>
+        <div class="field"><label>Security alarm?</label><select id="ho-alarm"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Approved locks?</label><select id="ho-locks"><option value="1">Yes</option><option value="0">No</option></select></div>
+        <div class="field"><label>Flood risk?</label><select id="ho-flooding"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Claims in 3 years?</label><select id="ho-claims"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Neighbourhood watch?</label><select id="ho-neigh"><option value="0">No</option><option value="1">Yes</option></select></div>
+      </div>
+    </div>
+    <button class="submit-btn green" onclick="predictHome()">Calculate home estimate</button>
+    <div class="loading" id="ho-loading">Calculating...</div>
+    <div class="result-box" id="ho-result">
+      <div class="result-header">Estimated annual home premium</div>
+      <div class="result-amount" id="ho-amount">—</div>
+      <div class="result-monthly" id="ho-monthly"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── AUTO ──────────────────────────────────────────────────── -->
+<div id="page-auto" class="page">
+  <div class="estimator">
+    <button class="back-btn" onclick="showPage('home')">← Back</button>
+    <div class="ins-tag" style="background:#f59e0b20;color:#f59e0b;display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:1rem;">Auto insurance</div>
+    <h1>Auto premium estimator</h1>
+    <p class="subtitle">Powered by a Random Forest model trained on 1,000 records. Model accuracy: R² = 0.98.</p>
+    <div class="form-section">
+      <h3>Driver details</h3>
+      <div class="form-grid">
+        <div class="field"><label>Driver age</label><input type="number" id="a-age" value="30" min="16" max="90"/></div>
+        <div class="field"><label>Years of experience</label><input type="number" id="a-exp" value="5" min="0" max="70"/></div>
+        <div class="field"><label>Previous accidents</label><input type="number" id="a-accidents" value="0" min="0" max="20"/></div>
+        <div class="field"><label>Annual mileage (x1000 km)</label><input type="number" id="a-mileage" value="15" step="0.1"/></div>
+      </div>
+    </div>
+    <div class="form-section">
+      <h3>Vehicle details</h3>
+      <div class="form-grid">
+        <div class="field"><label>Car manufacturing year</label><input type="number" id="a-caryear" value="2018" min="1970" max="2025"/></div>
+        <div class="field"><label>Car age (years)</label><input type="number" id="a-carage" value="5" min="0" max="50"/></div>
+      </div>
+    </div>
+    <button class="submit-btn amber" onclick="predictAuto()">Calculate auto estimate</button>
+    <div class="loading" id="a-loading">Calculating...</div>
+    <div class="result-box" id="a-result">
+      <div class="result-header">Estimated annual auto premium</div>
+      <div class="result-amount" id="a-amount">—</div>
+      <div class="result-monthly" id="a-monthly"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIFE ──────────────────────────────────────────────────── -->
+<div id="page-life" class="page">
+  <div class="estimator">
+    <button class="back-btn" onclick="showPage('home')">← Back</button>
+    <div class="ins-tag" style="background:#a855f720;color:#a855f7;display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:1rem;">Life insurance</div>
+    <h1>Life premium estimator</h1>
+    <p class="subtitle">Powered by a Random Forest model trained on 185,000 records. Model accuracy: R² = 0.72.</p>
+    <div class="form-section">
+      <h3>Policy details</h3>
+      <div class="form-grid">
+        <div class="field"><label>Age at entry</label><input type="number" id="l-age" value="30" min="18" max="80"/></div>
+        <div class="field"><label>Sex</label><select id="l-sex"><option value="female">Female</option><option value="male">Male</option></select></div>
+        <div class="field"><label>Benefit amount ($)</label><input type="number" id="l-benefit" value="100000" step="10000"/></div>
+        <div class="field"><label>Policy term (years)</label><input type="number" id="l-term" value="10" min="1" max="40"/></div>
+        <div class="field"><label>Payment mode</label>
+          <select id="l-payment">
+            <option value="1">Monthly</option>
+            <option value="2">Quarterly</option>
+            <option value="3">Annually</option>
+          </select>
+        </div>
+        <div class="field"><label>Policy type</label>
+          <select id="l-policy">
+            <option value="1">Standard</option>
+            <option value="2">Enhanced</option>
+            <option value="3">Premium</option>
+          </select>
+        </div>
+        <div class="field"><label>High risk applicant?</label>
+          <select id="l-risk"><option value="0">No</option><option value="1">Yes</option></select>
+        </div>
+      </div>
+    </div>
+    <button class="submit-btn purple" onclick="predictLife()">Calculate life estimate</button>
+    <div class="loading" id="l-loading">Calculating...</div>
+    <div class="result-box" id="l-result">
+      <div class="result-header">Estimated annual life premium</div>
+      <div class="result-amount" id="l-amount">—</div>
+      <div class="result-monthly" id="l-monthly"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  async function postPredict(payload) {
+    const res = await fetch('/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  }
+
+  async function predictHealth() {
+    const payload = { age: document.getElementById('h-age').value, sex: document.getElementById('h-sex').value, bmi: document.getElementById('h-bmi').value, smoker: document.getElementById('h-smoker').value, children: document.getElementById('h-children').value, region: document.getElementById('h-region').value };
+    document.getElementById('h-loading').style.display = 'block';
+    document.getElementById('h-result').classList.remove('visible');
+    const data = await postPredict(payload);
+    document.getElementById('h-loading').style.display = 'none';
+    if (data.health && !data.health.error) {
+      document.getElementById('h-amount').textContent  = '$' + data.health.annual.toLocaleString();
+      document.getElementById('h-monthly').textContent = 'approx. $' + data.health.monthly.toLocaleString() + ' per month';
+      const COEFFS = { age: 256.98, bmi: 337.09, children: 425.28, sex: -18.59, smoker: 23651.13, region_northwest: -370.68, region_southeast: -657.86, region_southwest: -809.80 };
+      const LABELS = { age: 'Age', bmi: 'BMI', children: 'Children', sex: 'Sex', smoker: 'Smoker', region_northwest: 'Region', region_southeast: 'Region', region_southwest: 'Region' };
+      const factors = data.health.factors;
+      const rows = Object.entries(factors).map(([k, v]) => ({ name: LABELS[k] || k, val: Math.abs((COEFFS[k] || 0) * v) })).sort((a, b) => b.val - a.val);
+      const maxVal = Math.max(...rows.map(r => r.val));
+      document.getElementById('h-breakdown').innerHTML = rows.filter(r => r.val > 0).map(r =>
+        `<div class="factor-row"><span class="factor-name">${r.name}</span><div class="bar-wrap"><div class="bar-fill" style="width:${(r.val/maxVal*100).toFixed(1)}%;background:#4f8ef7;"></div></div><span class="factor-val">$${Math.round(r.val).toLocaleString()}</span></div>`
+      ).join('');
+      document.getElementById('h-result').classList.add('visible');
+    }
+  }
+
+  async function predictHome() {
+    const payload = { sex: document.getElementById('ho-sex').value, sum_insured: document.getElementById('ho-buildings').value, sum_contents: document.getElementById('ho-contents').value, bedrooms: document.getElementById('ho-bedrooms').value, year_built: document.getElementById('ho-yearbuilt').value, alarm: document.getElementById('ho-alarm').value, locks: document.getElementById('ho-locks').value, flooding: document.getElementById('ho-flooding').value, claim3years: document.getElementById('ho-claims').value, neigh_watch: document.getElementById('ho-neigh').value };
+    document.getElementById('ho-loading').style.display = 'block';
+    document.getElementById('ho-result').classList.remove('visible');
+    const data = await postPredict(payload);
+    document.getElementById('ho-loading').style.display = 'none';
+    if (data.home && !data.home.error) {
+      document.getElementById('ho-amount').textContent  = '$' + data.home.annual.toLocaleString();
+      document.getElementById('ho-monthly').textContent = 'approx. $' + data.home.monthly.toLocaleString() + ' per month';
+      document.getElementById('ho-result').classList.add('visible');
+    }
+  }
+
+  async function predictAuto() {
+    const payload = { driver_age: document.getElementById('a-age').value, driver_experience: document.getElementById('a-exp').value, prev_accidents: document.getElementById('a-accidents').value, annual_mileage: document.getElementById('a-mileage').value, car_year: document.getElementById('a-caryear').value, car_age: document.getElementById('a-carage').value };
+    document.getElementById('a-loading').style.display = 'block';
+    document.getElementById('a-result').classList.remove('visible');
+    const data = await postPredict(payload);
+    document.getElementById('a-loading').style.display = 'none';
+    if (data.auto && !data.auto.error) {
+      document.getElementById('a-amount').textContent  = '$' + data.auto.annual.toLocaleString();
+      document.getElementById('a-monthly').textContent = 'approx. $' + data.auto.monthly.toLocaleString() + ' per month';
+      document.getElementById('a-result').classList.add('visible');
+    }
+  }
+
+  async function predictLife() {
+    const payload = { age: document.getElementById('l-age').value, sex: document.getElementById('l-sex').value, life_benefit: document.getElementById('l-benefit').value, policy_year: document.getElementById('l-term').value, payment_mode: document.getElementById('l-payment').value, policy_type: document.getElementById('l-policy').value, substandard_risk: document.getElementById('l-risk').value };
+    document.getElementById('l-loading').style.display = 'block';
+    document.getElementById('l-result').classList.remove('visible');
+    const data = await postPredict(payload);
+    document.getElementById('l-loading').style.display = 'none';
+    if (data.life && !data.life.error) {
+      document.getElementById('l-amount').textContent  = '$' + data.life.annual.toLocaleString();
+      document.getElementById('l-monthly').textContent = 'approx. $' + data.life.monthly.toLocaleString() + ' per month';
+      document.getElementById('l-result').classList.add('visible');
+    }
+  }
+</script>
+
+</body>
+</html>
